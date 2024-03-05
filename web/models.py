@@ -77,4 +77,35 @@ class Cliente(models.Model):
         
     def __str__(self):
         return self.nombre
+
+##### MODELOS PARA LOS PEDIDOS #####
+
+class Pedido(models.Model):
+     ESTADO_CHOICES = (
+        ('0','Pendiente'),
+        ('1','Pagado'),  
+    )    
+     
+     cliente = models.ForeignKey(Cliente,on_delete=models.RESTRICT)
+     fecha_registro = models.DateTimeField(auto_now=True)
+     nro_pedido = models.CharField(max_length=20,null=True)
+     monto_total = models.DecimalField(max_digits=10,decimal_places=2, default=0)
+     estado = models.CharField(max_length=1,default='0',choices=ESTADO_CHOICES)
+     
+     
+     def __str__(self):
+         return self.nro_pedido
+     
+     
+class PedidoDetalle(models.Model):
+    pedido = models.ForeignKey(Pedido,on_delete=models.RESTRICT)
+    producto = models.ForeignKey(Producto,on_delete=models.RESTRICT)
+    cantidad = models.IntegerField(default=1)
+    precio = models.DecimalField(max_digits=10,decimal_places=2)
+    subtotal = models.DecimalField(max_digits=10,decimal_places=2)
     
+    class Meta:
+        db_table = 'tbl_pedido_detalle'
+        
+    def __str__(self):
+        return self.producto.nombre
